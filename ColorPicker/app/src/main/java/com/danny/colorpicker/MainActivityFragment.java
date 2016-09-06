@@ -13,7 +13,9 @@ import android.widget.SeekBar;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment {
+public class MainActivityFragment extends Fragment implements SeekBar.OnSeekBarChangeListener{
+
+    private int color;
 
     private SeekBar SbarRed_SeekBar;
     private SeekBar SbarGreen_SeekBar;
@@ -27,8 +29,7 @@ public class MainActivityFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_main, container, false);
 
         SbarRed_SeekBar = (SeekBar) root.findViewById(R.id.SbarRed_SeekBar);
@@ -51,7 +52,7 @@ public class MainActivityFragment extends Fragment {
 
         //version 3 - anonymous inner class
 
-        SeekBar.OnSeekBarChangeListener handler = new SeekBar.OnSeekBarChangeListener() {
+        /*SeekBar.OnSeekBarChangeListener handler = new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 updatePreview();
@@ -71,12 +72,33 @@ public class MainActivityFragment extends Fragment {
         SbarRed_SeekBar.setOnSeekBarChangeListener(handler);
         SbarGreen_SeekBar.setOnSeekBarChangeListener(handler);
         SbarBlue_SeekBar.setOnSeekBarChangeListener(handler);
-        SbarAlpha_SeekBar.setOnSeekBarChangeListener(handler);
+        SbarAlpha_SeekBar.setOnSeekBarChangeListener(handler);*/
 
+
+        //version 4
+        SbarRed_SeekBar.setOnSeekBarChangeListener(this);
+        SbarGreen_SeekBar.setOnSeekBarChangeListener(this);
+        SbarBlue_SeekBar.setOnSeekBarChangeListener(this);
+        SbarAlpha_SeekBar.setOnSeekBarChangeListener(this);
 
 
         return root;
     }
+
+
+    public String getColorCode()
+    {
+        int red = Color.red(color);
+        int green = Color.green(color);
+        int blue = Color.blue(color);
+        int alpha = Color.alpha(color);
+
+        return String.format("Color(%d, %d, %d, %d)", red, green, blue, alpha);
+
+    }
+
+
+
 
     private class ColorPreviewUpdateHandlerV2 implements SeekBar.OnSeekBarChangeListener
     {
@@ -92,8 +114,22 @@ public class MainActivityFragment extends Fragment {
 
     private void updatePreview()
     {
-        int color = Color.argb(SbarAlpha_SeekBar.getProgress(), SbarRed_SeekBar.getProgress(), SbarGreen_SeekBar.getProgress(), SbarBlue_SeekBar.getProgress());
+        color = Color.argb(SbarAlpha_SeekBar.getProgress(), SbarRed_SeekBar.getProgress(), SbarGreen_SeekBar.getProgress(), SbarBlue_SeekBar.getProgress());
         ImgViewColors_ImageView.setBackgroundColor(color);
         fragment.setBackgroundColor(color);
+    }
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        updatePreview();
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+        //not used
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        //not used
     }
 }

@@ -1,4 +1,4 @@
-package com.danny.colorpicker;
+package com.example.a1342097.assignment1;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -8,10 +8,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.SeekBar;
-import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,14 +18,14 @@ public class MainActivity extends AppCompatActivity{
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
-        });
+        });*/
     }
 
     @Override
@@ -45,25 +43,10 @@ public class MainActivity extends AppCompatActivity{
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        if (id == R.id.action_save)
-        {
-
-
-            MainActivityFragment fragment = (MainActivityFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
-
-            String colorHTML = fragment.getColorCode();
-
-            Toast toast = Toast.makeText(this, colorHTML, Toast.LENGTH_LONG);
-            toast.show();
-
+        if (id == R.id.action_save) {
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
-
 }
