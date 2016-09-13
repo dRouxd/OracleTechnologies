@@ -4,7 +4,8 @@
     android:layout_height="match_parent"
     tools:context="com.example.a1342097.assignment1.MainActivityFragment"
     tools:showIn="@layout/activity_main"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:id="@+id/MainLayout">
 
 
     <EditText
@@ -62,14 +63,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#3a3a3a"
-        android:visibility="gone">
+        android:visibility="gone"
+        android:id="@+id/TimeLayout">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="Time"
-            android:id="@+id/textView2"
+            android:id="@+id/LblTime_TextView"
             android:textColor="#ffffff"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="5dp"
@@ -79,21 +81,23 @@
         android:layout_width="fill_parent"
         android:layout_height="1dip"
         android:background="#232323"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:id="@+id/ViewHorizontalBar1_CustomView" />
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#3a3a3a"
-        android:visibility="gone">
+        android:visibility="gone"
+        android:id="@+id/DateLayout">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="Date"
-            android:id="@+id/textView3"
+            android:id="@+id/LblDate_TextView"
             android:textColor="#ffffff"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="5dp"
@@ -103,7 +107,8 @@
         android:layout_width="fill_parent"
         android:layout_height="1dip"
         android:background="#232323"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:id="@+id/ViewHorizontalBar2_CustomView" />
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -114,66 +119,74 @@
         <com.example.a1342097.assignment1.CircleView
             android:layout_width="wrap_content"
             android:layout_height="30dp"
-            android:id="@+id/view"
+            android:id="@+id/Circle1_CircleView"
             android:layout_margin="10dp"
             android:layout_gravity="left|center_horizontal"
-            android:layout_weight=".8" />
+            android:layout_weight=".8"
+            android:paddingBottom="2dp" />
 
         <com.example.a1342097.assignment1.CircleView
             android:layout_width="wrap_content"
             android:layout_height="30dp"
-            android:id="@+id/view2"
+            android:id="@+id/Circle2_CircleView"
             android:layout_gravity="left|center_horizontal"
             android:layout_margin="10dp"
-            android:layout_weight=".8" />
+            android:layout_weight=".8"
+            android:paddingBottom="2dp" />
 
         <com.example.a1342097.assignment1.CircleView
             android:layout_width="wrap_content"
             android:layout_height="30dp"
-            android:id="@+id/view3"
+            android:id="@+id/Circle3_CircleView"
             android:layout_gravity="left|center_horizontal"
             android:layout_margin="10dp"
-            android:layout_weight=".8" />
+            android:layout_weight=".8"
+            android:paddingBottom="2dp" />
 
         <com.example.a1342097.assignment1.CircleView
             android:layout_width="wrap_content"
             android:layout_height="30dp"
-            android:id="@+id/view4"
+            android:id="@+id/Circle4_CircleView"
             android:layout_gravity="left|center_horizontal"
             android:layout_margin="10dp"
-            android:layout_weight=".8" />
+            android:layout_weight=".8"
+            android:paddingBottom="2dp" />
 
         <com.example.a1342097.assignment1.CircleView
             android:layout_width="wrap_content"
             android:layout_height="30dp"
-            android:id="@+id/view5"
+            android:id="@+id/Circle5_CircleView"
             android:layout_gravity="left|center_horizontal"
             android:layout_margin="10dp"
-            android:layout_weight=".8" />
+            android:layout_weight=".8"
+            android:paddingBottom="2dp" />
 
         <com.example.a1342097.assignment1.CircleView
             android:layout_width="wrap_content"
             android:layout_height="30dp"
-            android:id="@+id/view6"
+            android:id="@+id/Circle6_CircleView"
             android:layout_gravity="left|center_horizontal"
             android:layout_margin="10dp"
-            android:layout_weight=".8" />
+            android:layout_weight=".8"
+            android:paddingBottom="2dp" />
 
         <com.example.a1342097.assignment1.CircleView
             android:layout_width="wrap_content"
             android:layout_height="30dp"
-            android:id="@+id/view7"
+            android:id="@+id/Circle7_CircleView"
             android:layout_gravity="left|center_horizontal"
             android:layout_margin="10dp"
-            android:layout_weight=".8" />
+            android:layout_weight=".8"
+            android:paddingBottom="2dp" />
 
         <com.example.a1342097.assignment1.CircleView
             android:layout_width="wrap_content"
             android:layout_height="30dp"
-            android:id="@+id/view8"
+            android:id="@+id/Circle8_CircleView"
             android:layout_gravity="left|center_horizontal"
             android:layout_margin="10dp"
-            android:layout_weight=".8" />
+            android:layout_weight=".8"
+            android:paddingBottom="2dp" />
     </LinearLayout>
 
 

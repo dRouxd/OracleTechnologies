@@ -3,6 +3,7 @@
     package="com.example.a1342097.assignment1">
 
     <application
+        android:debuggable="true"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="Notes"
