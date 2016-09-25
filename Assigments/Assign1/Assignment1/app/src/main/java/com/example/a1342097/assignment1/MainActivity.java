@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.Calendar;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -48,6 +50,18 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_save) {
+
+
+            MainActivityFragment fragment = (MainActivityFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
+
+            String title = fragment.TxtTitle_EditText.getText().toString();
+            String body = fragment.TxtBody_EditText.getText().toString();
+            int category = fragment.category;
+            boolean hasReminder = fragment.hasReminder;
+            Calendar calendar = fragment.calendar;
+
+            Note note = new Note(title, body, category, hasReminder, calendar.getTime());
+
             return true;
         }
 

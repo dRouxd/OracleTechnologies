@@ -69,10 +69,11 @@ public class DatePickerDialogFragment extends DialogFragment {
         int month;
         int dayOfMonth;
 
-        if(savedInstanceState != null && savedInstanceState.containsKey(EXTRA_YEAR)) {
-            year = savedInstanceState.getInt(EXTRA_YEAR);
-            month = savedInstanceState.getInt(EXTRA_MONTH);
-            dayOfMonth = savedInstanceState.getInt(EXTRA_DAY_OF_MONTH);
+        Bundle args = getArguments();
+        if(args.containsKey(EXTRA_YEAR)) {
+            year = args.getInt(EXTRA_YEAR);
+            month = args.getInt(EXTRA_MONTH);
+            dayOfMonth = args.getInt(EXTRA_DAY_OF_MONTH);
         }
         else {
             // Use the current time as the default values for the picker

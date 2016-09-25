@@ -1,10 +1,10 @@
 package com.example.a1342097.assignment1;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
@@ -14,6 +14,8 @@ import android.view.View;
  * @author Ian Clement (ian.clement@johnabbott.qc.ca)
  */
 public class CircleView extends View {
+
+    private static final float STROKE_WIDTH = 3.0f;
 
     // The paint for the circle
     private Paint paint;
@@ -26,27 +28,34 @@ public class CircleView extends View {
 
     public CircleView(Context context) {
         super(context);
-        init();
+        init(-1);
     }
 
     public CircleView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
+
+        // get the custom attribute "circleColor" from the attribute set
+        int[] ids = new int[] { R.attr.circleColor };
+        TypedArray a = context.getTheme().obtainStyledAttributes(attrs, ids, 0, 0);
+        int colorResourceId = a.getColor(0, -1); // our values is the 0th element, default to -1 if not set
+
+        // intialize with the set attribute or color WHITE otherwise
+        init(colorResourceId != -1 ? colorResourceId : Color.WHITE);
     }
 
     /**
      * Initialized the view with default colors.
      */
-    private void init() {
+    private void init(int colorResId) {
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setStyle(Paint.Style.FILL);
 
         borderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         borderPaint.setStyle(Paint.Style.STROKE);
         borderPaint.setColor(Color.BLACK);
-        borderPaint.setStrokeWidth(3);
+        borderPaint.setStrokeWidth(STROKE_WIDTH);
 
-        setColor(220, 150, 86);
+        setColor(colorResId);
     }
 
     /**
@@ -102,7 +111,8 @@ public class CircleView extends View {
         float diameter = Math.min(actualWidth, actualHeight);
 
         // Fix the position of the circle offset by top/left padding
-        position = new RectF(0.0f, 0.0f, diameter, diameter);
+        // ensure that the stroke width will not result in cutoff
+        position = new RectF(STROKE_WIDTH / 2, STROKE_WIDTH / 2, diameter - STROKE_WIDTH, diameter - STROKE_WIDTH);
         position.offset(getPaddingLeft(), getPaddingTop());
     }
 

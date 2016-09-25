@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     tools:context="com.example.a1342097.assignment1.MainActivityFragment"
     tools:showIn="@layout/activity_main"
     android:orientation="vertical"
@@ -124,7 +125,8 @@
             android:layout_margin="10dp"
             android:layout_gravity="left|center_horizontal"
             android:layout_weight=".8"
-            android:paddingBottom="2dp" />
+            android:paddingBottom="2dp"
+            custom:circleColor="@color/base08"/>
 
         <com.example.a1342097.assignment1.CircleView
             android:layout_width="wrap_content"
@@ -133,7 +135,8 @@
             android:layout_gravity="left|center_horizontal"
             android:layout_margin="10dp"
             android:layout_weight=".8"
-            android:paddingBottom="2dp" />
+            android:paddingBottom="2dp"
+            custom:circleColor="@color/base09"/>
 
         <com.example.a1342097.assignment1.CircleView
             android:layout_width="wrap_content"
@@ -142,7 +145,8 @@
             android:layout_gravity="left|center_horizontal"
             android:layout_margin="10dp"
             android:layout_weight=".8"
-            android:paddingBottom="2dp" />
+            android:paddingBottom="2dp"
+            custom:circleColor="@color/base0A"/>
 
         <com.example.a1342097.assignment1.CircleView
             android:layout_width="wrap_content"
@@ -151,7 +155,8 @@
             android:layout_gravity="left|center_horizontal"
             android:layout_margin="10dp"
             android:layout_weight=".8"
-            android:paddingBottom="2dp" />
+            android:paddingBottom="2dp"
+            custom:circleColor="@color/base0B"/>
 
         <com.example.a1342097.assignment1.CircleView
             android:layout_width="wrap_content"
@@ -160,7 +165,8 @@
             android:layout_gravity="left|center_horizontal"
             android:layout_margin="10dp"
             android:layout_weight=".8"
-            android:paddingBottom="2dp" />
+            android:paddingBottom="2dp"
+            custom:circleColor="@color/base0C"/>
 
         <com.example.a1342097.assignment1.CircleView
             android:layout_width="wrap_content"
@@ -169,7 +175,8 @@
             android:layout_gravity="left|center_horizontal"
             android:layout_margin="10dp"
             android:layout_weight=".8"
-            android:paddingBottom="2dp" />
+            android:paddingBottom="2dp"
+            custom:circleColor="@color/base0D"/>
 
         <com.example.a1342097.assignment1.CircleView
             android:layout_width="wrap_content"
@@ -178,7 +185,8 @@
             android:layout_gravity="left|center_horizontal"
             android:layout_margin="10dp"
             android:layout_weight=".8"
-            android:paddingBottom="2dp" />
+            android:paddingBottom="2dp"
+            custom:circleColor="@color/base0E"/>
 
         <com.example.a1342097.assignment1.CircleView
             android:layout_width="wrap_content"
@@ -187,7 +195,8 @@
             android:layout_gravity="left|center_horizontal"
             android:layout_margin="10dp"
             android:layout_weight=".8"
-            android:paddingBottom="2dp" />
+            android:paddingBottom="2dp"
+            custom:circleColor="@color/base0F"/>
     </LinearLayout>
 
 
