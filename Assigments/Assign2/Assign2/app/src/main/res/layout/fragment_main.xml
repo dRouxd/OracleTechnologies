@@ -23,57 +23,58 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <GridLayout
-                android:layout_width="fill_parent"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <ImageView
                     android:layout_width="20dp"
-                    android:layout_height="fill_parent"
+                    android:layout_height="20dp"
                     android:id="@+id/imageView"
                     android:background="#ff0000"
-                    android:layout_row="0"
-                    android:layout_column="0"
-                    android:layout_rowWeight=".1"
-                    android:layout_rowSpan="2"
-                    android:layout_columnWeight=".25" />
+                    android:layout_alignBottom="@+id/textView2"
+                    android:layout_alignTop="@+id/imageView2" />
 
                 <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Medium Text"
+                    android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dignissim con tincidunt."
                     android:id="@+id/textView"
-                    android:layout_row="0"
-                    android:layout_column="1"
-                    android:padding="5dp"
-                    android:layout_columnWeight=".25" />
+                    android:layout_alignParentTop="true"
+                    android:paddingLeft="30dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_toLeftOf="@+id/imageView2"
+                    android:layout_toStartOf="@+id/imageView2" />
 
                 <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="Small Text"
+                    android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dignissim condimentum tincidunt. Morbi varius, sapien et rutrum tempus, lorem nisl ultrices arcu, nec condimentum justo mi rutrum enim. Sed eu purus eu dolor ullamcorper cursus. Aliquam porttitor condimentum mauris, blandit cursus nisl aliquet nec. Suspendisse sit amet consequat eros, in fermentum velit. Pellentesque non libero sagittis, commodo tellus sed, tincidunt dolor. Pellentesque dapibus lacus ac urna semper lacinia id eget massa. Aliquam ut eleifend ex. Nam condimentum velit eu turpis congue tristique. Fusce id aliquam diam."
                     android:id="@+id/textView2"
-                    android:layout_row="1"
-                    android:layout_column="1"
-                    android:padding="5dp"
-                    android:layout_columnWeight=".25" />
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="30dp"
+                    android:paddingRight="10dp"
+                    android:layout_below="@+id/textView"
+                    android:layout_toRightOf="@+id/imageView"
+                    android:layout_toLeftOf="@+id/imageView2"
+                    android:layout_toStartOf="@+id/imageView2" />
 
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="fill_parent"
                     android:id="@+id/imageView2"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
                     android:background="#000000"
-                    android:layout_weight="1"
-                    android:layout_row="0"
-                    android:layout_column="2"
-                    android:layout_gravity="right"
-                    android:layout_rowWeight="1"
-                    android:layout_rowSpan="2"
-                    android:layout_columnWeight=".25" />
+                    android:layout_alignParentTop="true"
+                    android:layout_alignBottom="@+id/textView2" />
 
-            </GridLayout>
+            </RelativeLayout>
 
         </LinearLayout>
     </ScrollView>
