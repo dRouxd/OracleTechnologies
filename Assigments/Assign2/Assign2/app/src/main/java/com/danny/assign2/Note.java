@@ -57,7 +57,7 @@ public class Note {
         this.category = category;
     }
 
-    public boolean isHasReminder() {
+    public boolean HasReminder() {
         return hasReminder;
     }
 
