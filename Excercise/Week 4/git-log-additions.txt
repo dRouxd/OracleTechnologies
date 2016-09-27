@@ -1,0 +1,604 @@
+commit e1cac77b9aee8f0c9f4110a416c7146d9df80599
+
+diff --git a/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/MainActivityFragment.java b/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/MainActivityFragment.java
+@@ -48,9 +48,16 @@ public class MainActivityFragment extends Fragment {
+        // 3.  get data from database
+        ContactDatabaseHandler dbh = new ContactDatabaseHandler(getContext());
+        final List<Contact> data;
+        try  {
+            data = dbh.getContactTable().readAll();
+            adapter.addAll(data);
+        }
+        catch (DatabaseException e) {
+            e.printStackTrace();
+        }
+
+
+commit 732696280cf5d7746a3e214c608c5c304b5e1653
+
+diff --git a/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/MainActivityFragment.java b/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/MainActivityFragment.java
+@@ -77,8 +77,28 @@ public class MainActivityFragment extends Fragment {
+
+            // test remaining operations
+
+            // readAll
+            for(Contact contact : contactTable.readAll())
+                Log.d("DEBUG", contact.toString());
+
+            // read
+            Contact contact = contactTable.read(55l);
+            Log.d("DEBUG", contact.toString());
+
+            // update
+            contact.setLastName("Quux");
+            contactTable.update(contact);
+            Log.d("DEBUG", contactTable.read(55l).toString());
+
+            // delete
+            contactTable.delete(contact);
+            contactTable.read(55l);
+
+            Log.d("DEBUG", "Contact deleted means read fails: " + e.getMessage());
+
+
+commit 9237a1a43d21989f460c663f479f56d3bee38fca
+
+diff --git a/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/model/ContactTable.java b/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/model/ContactTable.java
+@@ -100,7 +100,7 @@ public class ContactTable extends Table<Contact> {
+        element.setId(id);
+
+
+commit a7c41d40ee19bf3de7fd92237bc9415f1f6be3ee
+
+diff --git a/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/MainActivityFragment.java b/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/MainActivityFragment.java
+@@ -4,6 +4,7 @@ import android.content.Context;
+import android.util.Log;
+@@ -15,6 +16,7 @@ import android.widget.Toast;
+import java.util.Date;
+@@ -66,7 +68,15 @@ public class MainActivityFragment extends Fragment {
+            Contact foo = new Contact(-1)
+                    .setFirstName("Foo")
+                    .setLastName("Bar")
+                    .setPhoneNumber("555-5555")
+                    .setLastCalled(new Date())
+                    .setCallCount(123);
+            Log.d("DEBUG", foo.toString());
+            contactTable.create(foo);
+            Log.d("DEBUG", foo.toString());
+
+diff --git a/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/model/Contact.java b/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/model/Contact.java
+@@ -103,4 +103,8 @@ public class Contact {
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+diff --git a/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/model/ContactTable.java b/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/model/ContactTable.java
+@@ -96,4 +96,11 @@ public class ContactTable extends Table<Contact> {
+
+    @Override
+    public Long create(Contact element) throws DatabaseException {
+        long id = super.create(element);
+        element.setId(id);git
+        return id;
+    }
+
+
+commit f7f9a3d700733d45b6213f533f0534f983d4c302
+
+diff --git a/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/model/ContactDatabaseHandler.java b/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/model/ContactDatabaseHandler.java
+@@ -20,7 +20,7 @@ public class ContactDatabaseHandler extends SQLiteOpenHelper {
+    private static final int DATABASE_VERSION = 4;
+
+diff --git a/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/model/ContactTable.java b/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/model/ContactTable.java
+@@ -86,5 +86,14 @@ public class ContactTable extends Table<Contact> {
+    @Override
+    public boolean hasInitialData() {
+        return true;
+    }
+
+    @Override
+    public void initialize(SQLiteDatabase database) {
+        for(Contact contact : ContactData.getData())
+            database.insertOrThrow(getName(), null, toContentValues(contact));
+    }
+
+
+commit 2448d443c8b158ec83cc651f2066590177b8723c
+
+diff --git a/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/model/ContactDatabaseHandler.java b/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/model/ContactDatabaseHandler.java
+@@ -20,7 +20,7 @@ public class ContactDatabaseHandler extends SQLiteOpenHelper {
+    private static final int DATABASE_VERSION = 3;
+
+diff --git a/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/model/ContactTable.java b/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/model/ContactTable.java
+@@ -1,19 +1,19 @@
+import android.database.Cursor;
+import java.text.ParseException;
+public class ContactTable extends Table<Contact> {
+@@ -26,105 +26,65 @@ public class ContactTable implements CRUDRepository<Long, Contact> {
+     *
+        super(dbh, "contact");
+
+        // create table structure
+        addColumn(new Column(COLUMN_FIRST_NAME, "TEXT").notNull());
+        addColumn(new Column(COLUMN_LAST_NAME, "TEXT").notNull());
+        addColumn(new Column(COLUMN_PHONE_NUMBER, "TEXT").notNull());
+        addColumn(new Column(COLUMN_LAST_CALLED, "TEXT"));
+        addColumn(new Column(COLUMN_CALL_COUNT, "INTEGER"));
+    public ContentValues toContentValues(Contact element) {
+        return values;
+    public Contact fromCursor(Cursor cursor) throws DatabaseException {
+        Contact contact = new Contact(cursor.getLong(0));
+
+        // get name and phone number
+        contact.setFirstName(cursor.getString(1));
+        contact.setLastName(cursor.getString(2));
+        contact.setPhoneNumber(cursor.getString(3));
+
+        // last called
+        if(!cursor.isNull(4)) {
+            try {
+                contact.setLastCalled(isoISO8601.parse(cursor.getString(4)));
+            }
+            catch (ParseException e) {
+                // package a ParseException as a generic DatabaseException
+                throw new DatabaseException(e);
+            }
+        }
+        // call count
+        if(!cursor.isNull(5))
+            contact.setCallCount(cursor.getInt(5));
+        return contact;
+    @Override
+    public String getId(Contact element) {
+        return String.valueOf(element.getId());
+ 
+commit b82be7b85a6c7a6d2fbe6fd28668d2caf5bd12a9
+diff --git a/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/model/Contact.java b/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/model/Contact.java
+
+@@ -23,6 +23,10 @@ public class Contact {
+    public Contact(long id) {
+        this.id = id;
+    }
+
+commit 72198973d4f848cb04224c81dc3dfe8abab1b46c
+diff --git a/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/model/Column.java b/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/model/Column.java
+@@ -0,0 +1,105 @@
+package ca.qc.johnabbott.cs.cs616.contacts.model;
+
+/**
+ * Represents a Column in an SQLite database
+ * - currently only some attributes are supported.
+ * @author Ian Clement (ian.clement@johnabbott.qc.ca)
+ */
+public class Column {
+
+    private String name;
+    private String type;
+    private boolean notNull;
+    private boolean unique;
+    private boolean primaryKey;
+    private boolean autoincrement;
+
+    public Column(String name, String type) {
+        this.name = name;
+        this.type = type;
+
+        // attributes
+        notNull = false;
+        unique = false;
+        primaryKey = false;
+        autoincrement = false;
+    }
+
+    /* Getters and setters
+    *
+    *   - setters return "this" to allow cascading setters.
+    * */
+
+    public String getName() {
+        return name;
+    }
+
+    public Column setName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public Column setType(String type) {
+        this.type = type;
+        return this;
+    }
+
+    public boolean isNotNull() {
+        return notNull;
+    }
+
+    public Column notNull() {
+        this.notNull = true;
+        return this;
+    }
+
+    public boolean isUnique() {
+        return unique;
+    }
+
+    public Column unique() {
+        this.unique = true;
+        return this;
+    }
+
+    public boolean isPrimaryKey() {
+        return primaryKey;
+    }
+
+    public Column primaryKey() {
+        this.primaryKey = true;
+        return this;
+    }
+
+    public boolean isAutoincrement() {
+        return autoincrement;
+    }
+
+    public Column autoincrement() {
+        this.autoincrement = true;
+        return this;
+    }
+
+    /**
+     * Convert the column to SQL CREATE TABLE syntax
+     * @return
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(name).append(" ").append(type);
+        if(primaryKey)
+            sb.append(" PRIMARY KEY");
+        if(notNull)
+            sb.append(" NOT NULL");
+        if(unique)
+            sb.append(" UNIQUE");
+        if(autoincrement)
+            sb.append(" AUTOINCREMENT");
+        return sb.toString();
+    }
+}
+diff --git a/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/model/Table.java b/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/model/Table.java
+@@ -0,0 +1,225 @@
+package ca.qc.johnabbott.cs.cs616.contacts.model;
+
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+/**
+ * Represents a Table in an SQLite database
+ * - currently only some integer primary kets are supported.
+ * @author Ian Clement (ian.clement@johnabbott.qc.ca)
+ */
+public class Table<T> implements CRUDRepository<Long, T> {
+
+    private final SQLiteOpenHelper dbh;
+
+    private final String name;
+    private final List<Column> columns;
+
+    public Table(SQLiteOpenHelper dbh, String name) {
+        this.name = name;
+        this.dbh = dbh;
+        columns = new LinkedList<>();
+        columns.add(new Column("_id", "INTEGER").primaryKey().autoincrement());
+    }
+
+    /** Getters **/
+    public SQLiteOpenHelper getDatabaseHandler() {
+        return dbh;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Add a column to the table.
+     * @param column column to add to the table.
+     */
+    public void addColumn(Column column) {
+        columns.add(column);
+    }
+
+    /**
+     * Get the SQL CREATE TABLE statement for this table.
+     * @return SQL CREATE TABLE statement.
+     */
+    public String getCreateTableStatement() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(String.format("CREATE TABLE %s (", name));
+
+        boolean first = false;
+        for(Column column : columns) {
+            if(!first)
+                first = true;
+            else
+                sb.append(", ");
+            sb.append(column.toString());
+        }
+        sb.append(");");
+        return sb.toString();
+    }
+
+    /**
+     * Get the SQL DROP TABLE statement for this table.
+     * @return SQL DROP TABLE statement.
+     */
+    public String getDropTableStatement() {
+        return String.format("DROP TABLE IF EXISTS %s;", name);
+    }
+
+    /**
+     * Get an array of column names to produce a SELECT * FROM ...
+     * @return
+     */
+    public String[] getSelectAll() {
+        String[] selection = new String[columns.size()];
+        for(int i = 0; i < selection.length; i++)
+            selection[i] = columns.get(i).getName();
+        return selection;
+    }
+
+    /**
+     * Check that the table has initial data.
+     * @return
+     */
+    public boolean hasInitialData() {
+        return false;
+    }
+
+    /**
+     * Populate table with initial data.
+     * Precondition: table has been created.
+     * Note: this method is called during the handler's onCreate method where a writable database is opne
+     *       trying to get a second writable database will throw an error, hence the parameter.
+     * @param database
+     */
+    public void initialize(SQLiteDatabase database) {
+    }
+
+    /**
+     * Create a ContentValues object from an element.
+     * - Meant to be overridden by subclasses.
+     * @param element
+     * @return
+     */
+    public ContentValues toContentValues(T element) {
+        throw new RuntimeException("Not implemented"); // or make this method "abstract"
+    }
+
+    /**
+     * Create an element from a query Cursor
+     * Precondition: the cursor is at the correct location in the dataset.
+     * @param cursor
+     * @return
+     * @throws DatabaseException
+     */
+    public T fromCursor(Cursor cursor) throws DatabaseException {
+        throw new RuntimeException("Not implemented"); // or make this method "abstract"
+    }
+
+    /**
+     * Get the ID of the element as a String object.
+     * @param element
+     * @return
+     */
+    public String getId(T element) {
+        throw new RuntimeException("Not implemented"); // or make this method "abstract"
+    }
+
+
+    /** CRUD Operations */
+
+    @Override
+    public Long create(T element) throws DatabaseException  {
+
+        SQLiteDatabase database = dbh.getWritableDatabase();
+
+        // Id of inserted element, -1 if error(?).
+        long insertId = -1;
+
+        // insert into DB
+        try {
+            ContentValues values = toContentValues(element);
+            insertId = database.insertOrThrow(name, null, values);
+        }
+        catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+        finally {
+            database.close();
+        }
+
+        return insertId;
+    }
+
+    @Override
+    public T read(Long id) throws DatabaseException {
+
+        SQLiteDatabase database = dbh.getReadableDatabase();
+
+        // query database
+        String[] projection = getSelectAll();
+        Cursor cursor = database.query(name, projection, "_id =?", new String[] { String.valueOf(id) }, null, null, null, null);
+
+        // check for result
+        if(cursor == null)
+            throw new DatabaseException("Operation read(" + id + "): no element with that id");
+
+        // check that only a single row is returned.
+        cursor.moveToFirst();
+        if(!cursor.isLast())
+            throw new DatabaseException("Operation read(" + id + "): more than one row matches. Aborting.");
+
+        return fromCursor(cursor);
+    }
+
+    @Override
+    public List<T> readAll() throws DatabaseException {
+        SQLiteDatabase database = dbh.getReadableDatabase();
+
+        List<T> elements = new ArrayList<>();
+
+        String[] selection = getSelectAll();
+        Cursor cursor = database.query(name, selection, null, null, null, null, null);
+        if(cursor != null) {
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                elements.add(fromCursor(cursor));
+                cursor.moveToNext();
+            }
+            // make sure to close the cursor
+            cursor.close();
+        }
+        return elements;
+    }
+
+    @Override
+    public boolean update(T element) throws DatabaseException {
+
+        SQLiteDatabase database = dbh.getWritableDatabase();
+
+        ContentValues values = toContentValues(element);
+        int rows = database.update(name, values, "_id = ?", new String[]{getId(element)});
+        database.close();
+
+        return rows == 1;
+    }
+
+    @Override
+    public boolean delete(T element) throws DatabaseException {
+        SQLiteDatabase database = dbh.getWritableDatabase();
+        int rows = database.delete(name, "_id = ?", new String[]{getId(element)});
+        database.close();
+        if(rows > 1)
+            throw new DatabaseException("More than 1 row deleted when deleting note.. possible database corruption.");
+        return rows == 1;
+    }
+}
+
+commit 6174d8f8d46b495e0de02f98bf8a51da00235155
+diff --git a/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/model/ContactDatabaseHandler.java b/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/model/ContactDatabaseHandler.java
+@@ -20,7 +20,7 @@ public class ContactDatabaseHandler extends SQLiteOpenHelper {
+    private static final int DATABASE_VERSION = 2;
+
+diff --git a/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/model/ContactTable.java b/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/model/ContactTable.java
+@@ -1,5 +1,7 @@
+import android.content.ContentValues;
+import android.database.SQLException;
+@@ -18,6 +20,12 @@ public class ContactTable implements CRUDRepository<Long, Contact> {
+    private static final String COLUMN_FIRST_NAME = "firstName";
+    private static final String COLUMN_LAST_NAME = "lastName";
+    private static final String COLUMN_LAST_CALLED = "lastCalled";
+    private static final String COLUMN_PHONE_NUMBER = "phoneNumber";
+    private static final String COLUMN_CALL_COUNT = "callCount";
+
+@@ -56,21 +64,29 @@ public class ContactTable implements CRUDRepository<Long, Contact> {
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_FIRST_NAME, element.getFirstName());
+        values.put(COLUMN_LAST_NAME, element.getLastName());
+        values.put(COLUMN_LAST_CALLED, element.getLastCalled() != null ? isoISO8601.format(element.getLastCalled()) : null);
+        values.put(COLUMN_PHONE_NUMBER, element.getPhoneNumber());
+        values.put(COLUMN_CALL_COUNT, element.getCallCount());
+
+        // Id of inserted element, -1 if error.
+        long insertId = -1;
+
+        // insert into DB
+        try {
+            insertId = database.insertOrThrow("contact", null, values);
+        }
+        catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+        finally {
+            // close DB no matter what happens
+            database.close();
+        }
+
+        return insertId;
+
+commit 437c14b77754ea177f0d97832452b992c321a2b5
+
+diff --git a/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/model/ContactTable.java b/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/model/ContactTable.java
+@@ -48,7 +48,7 @@ public class ContactTable implements CRUDRepository<Long, Contact> {
+        return "DROP TABLE IF EXISTS contact;";
+
+commit 1f268e9ac2b3160008d5c26bd110c08bde2a9d89
+diff --git a/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/MainActivityFragment.java b/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/MainActivityFragment.java
+@@ -19,6 +19,9 @@ import java.util.List;
+import ca.qc.johnabbott.cs.cs616.contacts.model.ContactDatabaseHandler;
+import ca.qc.johnabbott.cs.cs616.contacts.model.ContactTable;
+import ca.qc.johnabbott.cs.cs616.contacts.model.DatabaseException;
+@@ -58,6 +61,18 @@ public class MainActivityFragment extends Fragment {
+        //*************************** TESTING *************************
+
+        ContactDatabaseHandler dbh = new ContactDatabaseHandler(getContext());
+        ContactTable contactTable = dbh.getContactTable();
+        try {
+            contactTable.create(ContactData.getContactById(0));
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+        }
+
+        //*************************************************************
+
+diff --git a/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/model/ContactTable.java b/lectures/03-Contacts/app/src/main/java/ca/qc/johnabbott/cs/cs616/contacts/model/ContactTable.java
+@@ -3,6 +3,7 @@ package ca.qc.johnabbott.cs.cs616.contacts.model;
+import java.text.SimpleDateFormat;
+@@ -12,6 +13,11 @@ import java.util.List;
+    /**
+     * ISO 8601 standard date format.
+     */
+    private static final SimpleDateFormat isoISO8601 = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.sss");
+
+@@ -27,7 +33,14 @@ public class ContactTable implements CRUDRepository<Long, Contact> {
+        return "CREATE TABLE contact (\n" +
+                    "_id INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
+                    "firstName TEXT NOT NULL UNIQUE, \n" +
+                    "lastName TEXT NOT NULL UNIQUE, \n" +
+                    "phoneNumber TEXT NOT NULL,\n" +
+                    "lastCalled TEXT,\n" +
+                    "callCount INTEGER\n" +
+                ");";
+@@ -35,12 +48,29 @@ public class ContactTable implements CRUDRepository<Long, Contact> {
+        return "DROP TABLE IF EXISTS note;";
+
+        SQLiteDatabase database = dbh.getWritableDatabase();
+
+        String createStatement = String.format("INSERT INTO contact (_id, firstName, lastName, phoneNumber, lastCalled, callCount)" +
+                                               "VALUES (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\")",
+                String.valueOf(element.getId()),
+                element.getFirstName(),
+                element.getLastName(),
+                element.getPhoneNumber(),
+                element.getLastCalled() != null ? isoISO8601.format(element.getLastCalled()) : "NULL",
+                String.valueOf(element.getCallCount())
+        );
+
+        database.execSQL(createStatement);
+
+        database.close();
+
+        return -1l;
+
