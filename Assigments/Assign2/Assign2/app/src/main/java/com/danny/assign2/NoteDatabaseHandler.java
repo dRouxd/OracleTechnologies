@@ -13,12 +13,12 @@ public class NoteDatabaseHandler extends SQLiteOpenHelper {
     /**
      * Filename to store the local database (on device).
      */
-    private static final String DATABASE_FILE_NAME = "contacts.db";
+    private static final String DATABASE_FILE_NAME = "notes.db";
 
     /**
      * Update this field for every structural change to the database.
      */
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 6;
 
 
     // TODO: maybe these could be replaced with a map of tables...
@@ -26,7 +26,7 @@ public class NoteDatabaseHandler extends SQLiteOpenHelper {
     /**
      * Contact database tables
      */
-    private NoteTable contactTable;
+    private NoteTable noteTable;
 
     /**
      * Construct a new database handler.
@@ -34,18 +34,18 @@ public class NoteDatabaseHandler extends SQLiteOpenHelper {
      */
     public NoteDatabaseHandler(Context context) {
         super(context, DATABASE_FILE_NAME, null, DATABASE_VERSION);
-        contactTable = new NoteTable(this, DATABASE_FILE_NAME);
+        noteTable = new NoteTable(this, "notes");
     }
 
     @Override
     public void onCreate(SQLiteDatabase database) {
 
         // create tables
-        database.execSQL(contactTable.getCreateTableStatement());
+        database.execSQL(noteTable.getCreateTableStatement());
 
         // populate tables as needed
-        if(contactTable.hasInitialData()) {
-            contactTable.initialize(database);
+        if(noteTable.hasInitialData()) {
+            noteTable.initialize(database);
         }
     }
 
@@ -55,7 +55,7 @@ public class NoteDatabaseHandler extends SQLiteOpenHelper {
         Log.w(DATABASE_FILE_NAME, "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
 
         // drop tables
-        database.execSQL(contactTable.getDropTableStatement());
+        database.execSQL(noteTable.getDropTableStatement());
 
         // recreate DB
         onCreate(database);
@@ -64,7 +64,7 @@ public class NoteDatabaseHandler extends SQLiteOpenHelper {
     /**
      * Getters
      */
-    public NoteTable getContactTable() {
-        return contactTable;
+    public NoteTable getNoteTable() {
+        return noteTable;
     }
 }

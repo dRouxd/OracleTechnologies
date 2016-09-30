@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 /**
@@ -21,6 +22,7 @@ public class NoteTable extends Table<Note>
     private final String COLUMN_CONTENT = "Content";
     private final String COLUMN_CATEGORY = "Category";
     private final String COLUMN_REMINDER_DATE = "ReminderDate";
+    private final String COLUMN_HAS_REMINDER = "HadReminder";
     private final String COLUMN_DATE_CREATED = "DateCreate";
 
     public NoteTable(SQLiteOpenHelper dbh, String name) {
@@ -29,7 +31,8 @@ public class NoteTable extends Table<Note>
         addColumn(new Column(COLUMN_TITLE, "TEXT").notNull());
         addColumn(new Column(COLUMN_CONTENT, "TEXT").notNull());
         addColumn(new Column(COLUMN_CATEGORY, "INTEGER"));
-        addColumn(new Column(COLUMN_REMINDER_DATE, "TEXT").notNull());
+        addColumn(new Column(COLUMN_REMINDER_DATE, "TEXT"));
+        addColumn(new Column(COLUMN_HAS_REMINDER, "INTEGER").notNull());
         addColumn(new Column(COLUMN_DATE_CREATED, "TEXT").notNull());
     }
 
@@ -43,6 +46,7 @@ public class NoteTable extends Table<Note>
         values.put(COLUMN_CONTENT, element.getBody());
         values.put(COLUMN_CATEGORY, element.getCategory());
         values.put(COLUMN_REMINDER_DATE, element.getReminder() != null ? isoISO8601.format(element.getReminder()) : null);
+        values.put(COLUMN_HAS_REMINDER, element.HasReminder() == true ? 1 : 0);
         values.put(COLUMN_DATE_CREATED, element.getCreated() != null ? isoISO8601.format(element.getCreated()) : null);
         return values;
     }
@@ -57,8 +61,14 @@ public class NoteTable extends Table<Note>
         if(!cursor.isNull(3))
             note.setCategory(cursor.getInt(3));
 
-        note.setReminder();
-        note.setHasReminder();
+        try {
+            if(!cursor.isNull(4))
+                note.setReminder(isoISO8601.parse(cursor.getString(4)));
+            note.setCreated(isoISO8601.parse(cursor.getString(6)));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        note.setHasReminder(cursor.getInt(5) == 1 ? true : false);
 
         return note;
     }

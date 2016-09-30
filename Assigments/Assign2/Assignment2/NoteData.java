@@ -1,4 +1,4 @@
-package com.danny.assign2;
+package ca.qc.johnabbott.cs.cs616.notes.model;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -77,12 +77,5 @@ public class NoteData {
             dataCopy.add(note);
         // this didn't work as expected Collections.copy(dataCopy, data);
         return dataCopy;
-    }
-
-    public static Note getNoteById(long id, List<Note> data) {
-        for(Note n : data)
-            if(n.getId() == id)
-                return n;
-        return null;
     }
 }

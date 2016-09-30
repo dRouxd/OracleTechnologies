@@ -47,12 +47,12 @@
 
         <ImageView
             android:layout_width="20dp"
-            android:layout_height="fill_parent"
+            android:layout_height="match_parent"
             android:id="@+id/ImgReminder_ImageView"
             android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentRight="false"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true"
+            android:layout_alignParentTop="false"
             android:layout_alignBottom="@+id/LblContent_TextView"
             android:src="@drawable/ic_alarm_off_black_48dp"
             android:adjustViewBounds="false"
