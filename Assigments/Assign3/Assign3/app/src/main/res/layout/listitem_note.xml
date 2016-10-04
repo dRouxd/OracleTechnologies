@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:id="@+id/ImgCategory_ImageView"
+            android:background="#ff0000"
+            android:layout_alignBottom="@+id/LblContent_TextView"
+            android:layout_alignTop="@+id/LblTitle_TextView" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dignissim con tincidunt."
+            android:id="@+id/LblTitle_TextView"
+            android:layout_alignParentTop="true"
+            android:paddingLeft="30dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_toLeftOf="@+id/ImgReminder_ImageView"
+            android:layout_toStartOf="@+id/ImgReminder_ImageView" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dignissim condimentum tincidunt. Morbi varius, sapien et rutrum tempus, lorem nisl ultrices arcu, nec condimentum justo mi rutrum enim. Sed eu purus eu dolor ullamcorper cursus. Aliquam porttitor condimentum mauris, blandit cursus nisl aliquet nec. Suspendisse sit amet consequat eros, in fermentum velit. Pellentesque non libero sagittis, commodo tellus sed, tincidunt dolor. Pellentesque dapibus lacus ac urna semper lacinia id eget massa. Aliquam ut eleifend ex. Nam condimentum velit eu turpis congue tristique. Fusce id aliquam diam."
+            android:id="@+id/LblContent_TextView"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:paddingLeft="30dp"
+            android:paddingRight="10dp"
+            android:layout_below="@+id/LblTitle_TextView"
+            android:layout_toLeftOf="@+id/LblTitle_TextView"
+            android:layout_toStartOf="@+id/ImgReminder_ImageView" />
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/ImgReminder_ImageView"
+            android:adjustViewBounds="false"
+            android:paddingTop="10dp"
+            android:scaleType="fitStart"
+            android:textAlignment="gravity"
+            android:layout_alignBottom="@+id/LblContent_TextView"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true" />
+
+    </RelativeLayout>
+
+</LinearLayout>
