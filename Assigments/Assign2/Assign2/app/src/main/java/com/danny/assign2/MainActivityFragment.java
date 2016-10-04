@@ -20,6 +20,7 @@ import android.widget.Toast;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -27,11 +28,15 @@ import java.util.List;
  */
 public class MainActivityFragment extends Fragment {
 
-    Spinner spinner;
-    ListView notes;
+    private Spinner spinner;
+    private ListView notes;
     private ArrayAdapter<Note> adapterList;
     private ArrayAdapter<String> adapterSpinner;
 
+    private final String SPINNER_TITLE = "Title";
+    private final String SPINNER_CREATION_DATE = "Creation Date";
+    private final String SPINNER_CATEGORY = "Category";
+    private final String SPINNER_REMINDER = "Reminder";
 
     public MainActivityFragment() {
     }
@@ -53,12 +58,16 @@ public class MainActivityFragment extends Fragment {
 
         //fill the spinner with options
         List<String> spinnerArray =  new ArrayList<String>();
-        spinnerArray.add("Title");
-        spinnerArray.add("Creation Date");
-        spinnerArray.add("Category");
-        spinnerArray.add("Reminder");
+        spinnerArray.add(SPINNER_TITLE);
+        spinnerArray.add(SPINNER_CREATION_DATE);
+        spinnerArray.add(SPINNER_CATEGORY);
+        spinnerArray.add(SPINNER_REMINDER);
         adapterSpinner = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, spinnerArray);
         spinner.setAdapter(adapterSpinner);
+
+
+
+
 
         //fill the list view
         adapterList = new NoteDataAdapter(this.getContext());
@@ -68,18 +77,68 @@ public class MainActivityFragment extends Fragment {
             adapterList.addAll(data);
             notes.setAdapter(adapterList);
 
-            notes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Toast.makeText(getContext(), NoteData.getNoteById(id, data).toString(), Toast.LENGTH_SHORT).show();
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    String selectedItem = parent.getItemAtPosition(position).toString();
+
+                    if(selectedItem == SPINNER_TITLE)
+                    {
+                        adapterList.sort(new Comparator<Note>() {
+                            @Override
+                            public int compare(Note o1, Note o2) {
+                                return o1.getTitle().compareTo(o2.getTitle());
+                            }
+                        });
+                    }else if(selectedItem == SPINNER_CATEGORY)
+                    {
+                        adapterList.sort(new Comparator<Note>() {
+                            @Override
+                            public int compare(Note o1, Note o2) {
+                                if(o1.getCategory() > o2.getCategory())
+                                    return 1;
+                                else if (o1.getCategory() < o2.getCategory())
+                                    return -1;
+                                return 0;
+                            }
+                        });
+                    }else if(selectedItem == SPINNER_CREATION_DATE)
+                    {
+                        adapterList.sort(new Comparator<Note>() {
+                            @Override
+                            public int compare(Note o1, Note o2) {
+                                return o1.getCreated().compareTo(o2.getCreated());
+                            }
+                        });
+                    }else if(selectedItem == SPINNER_REMINDER)
+                    {
+                        adapterList.sort(new Comparator<Note>() {
+                            @Override
+                            public int compare(Note o1, Note o2) {
+                                if(o1.HasReminder() && o2.HasReminder())
+                                    return o1.getReminder().compareTo(o2.getReminder());
+                                else if (o1.HasReminder())
+                                    return -1;
+                                return 1;
+                            }
+                        });
+                    }
+
+
+                    notes.setAdapter(adapterList);
+
+
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
                 }
             });
-
 
         } catch (DatabaseException e) {
             e.printStackTrace();
         }
-
 
 
 
@@ -104,7 +163,7 @@ public class MainActivityFragment extends Fragment {
                 root = inflater.inflate(R.layout.listitem_note, parent, false);
             }
 
-            Note note = getItem(position);
+            final Note note = getItem(position);
 
             ImageView category = (ImageView) root.findViewById(R.id.ImgCategory_ImageView);
             ImageView reminder = (ImageView) root.findViewById(R.id.ImgReminder_ImageView);
@@ -115,15 +174,75 @@ public class MainActivityFragment extends Fragment {
             content.setText(note.getBody());
             category.setBackgroundColor(note.getCategory());
 
+
+
+
+
+
+
+
             if(note.HasReminder())
             {
-                reminder.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_alarm_on_black_48dp, null));
+                reminder.setImageResource(R.drawable.ic_alarm_on_black_48dp);
+                //reminder.setBackgroundResource(R.drawable.ic_alarm_on_black_48dp);
+
             }else
             {
-                reminder.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_alarm_off_black_48dp, null));
+                reminder.setImageResource(R.drawable.ic_alarm_off_black_48dp);
+                //reminder.setBackgroundResource(R.drawable.ic_alarm_off_black_48dp);
             }
+
             reminder.setScaleType(ImageView.ScaleType.FIT_START);
             reminder.setTextAlignment(View.TEXT_ALIGNMENT_GRAVITY);
+
+            reminder.getLayoutParams().height = 70;
+            reminder.getLayoutParams().width = 70;
+
+
+
+
+
+
+
+            title.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v)
+                {
+                    Toast.makeText(getContext(), note.toString(), Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            content.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getContext(), note.toString(), Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            reminder.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    NoteDatabaseHandler dbh = new NoteDatabaseHandler(getContext());
+
+                    Note update = note;
+                    if(update.HasReminder())
+                        update.setHasReminder(false);
+                    else
+                        update.setHasReminder(true);
+
+                    try {
+                        dbh.getNoteTable().update(update);
+
+                        adapterList.clear();
+                        adapterList.addAll(dbh.getNoteTable().readAll());
+
+                    } catch (DatabaseException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+
 
             return root;
         }

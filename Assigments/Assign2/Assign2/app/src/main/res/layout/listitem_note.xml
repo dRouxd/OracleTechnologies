@@ -15,7 +15,7 @@
             android:id="@+id/ImgCategory_ImageView"
             android:background="#ff0000"
             android:layout_alignBottom="@+id/LblContent_TextView"
-            android:layout_alignTop="@+id/ImgReminder_ImageView" />
+            android:layout_alignTop="@+id/LblTitle_TextView" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -41,24 +41,21 @@
             android:paddingLeft="30dp"
             android:paddingRight="10dp"
             android:layout_below="@+id/LblTitle_TextView"
-            android:layout_toRightOf="@+id/ImgCategory_ImageView"
-            android:layout_toLeftOf="@+id/ImgReminder_ImageView"
+            android:layout_toLeftOf="@+id/LblTitle_TextView"
             android:layout_toStartOf="@+id/ImgReminder_ImageView" />
 
         <ImageView
-            android:layout_width="20dp"
-            android:layout_height="match_parent"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:id="@+id/ImgReminder_ImageView"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="false"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="false"
-            android:layout_alignBottom="@+id/LblContent_TextView"
-            android:src="@drawable/ic_alarm_off_black_48dp"
             android:adjustViewBounds="false"
-            android:textAlignment="gravity"
+            android:paddingTop="10dp"
             android:scaleType="fitStart"
-            android:paddingTop="10dp" />
+            android:textAlignment="gravity"
+            android:layout_alignBottom="@+id/LblContent_TextView"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true" />
 
     </RelativeLayout>
 
