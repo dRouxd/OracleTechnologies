@@ -1,5 +1,6 @@
 package com.danny.a1342097.assign3;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -9,7 +10,11 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.Date;
+
 public class MainActivity extends AppCompatActivity {
+
+    private MainActivityFragment mainActivityFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,10 +27,24 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+
             }
         });
+
+        mainActivityFragment = (MainActivityFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_main);
+        mainActivityFragment.setOnNoteChosen(new MainActivityFragment.OnNoteChosen() {
+            @Override
+            public void OnNoteChosen(String title, String content, boolean hasReminder, Date reminder, int category) {
+                Intent intent = new Intent(MainActivity.this, Note_MainActivity.class);
+                intent.putExtra(Note_MainActivity.param.title, title);
+                intent.putExtra(Note_MainActivity.param.content, content);
+                intent.putExtra(Note_MainActivity.param.hasReminder, hasReminder);
+                intent.putExtra(Note_MainActivity.param.reminderDate, reminder);
+                intent.putExtra(Note_MainActivity.param.category, category);
+                startActivityForResult(intent, 1);
+            }
+        });
+
     }
 
     @Override
@@ -48,5 +67,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+
+
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

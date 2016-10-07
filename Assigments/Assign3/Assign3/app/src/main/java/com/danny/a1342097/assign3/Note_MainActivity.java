@@ -16,6 +16,24 @@ import java.util.Date;
 
 public class Note_MainActivity extends AppCompatActivity {
 
+    public static class param
+    {
+        public static final String title = "TITLE";
+        public static final String content = "CONTENT";
+        public static final String hasReminder = "HAS_REMINDER";
+        public static final String reminderDate = "REMINDER_DATE";
+        public static final String category = "CATEGORY";
+    }
+
+    public static class results
+    {
+        public static final String title = "TITLE";
+        public static final String content = "CONTENT";
+        public static final String hasReminder = "HAS_REMINDER";
+        public static final String reminderDate = "REMINDER_DATE";
+        public static final String category = "CATEGORY";
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +73,7 @@ public class Note_MainActivity extends AppCompatActivity {
         if (id == R.id.action_save) {
 
 
-            Note_MainActivityFragment fragment = (Note_MainActivityFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
+            Note_MainActivityFragment fragment = (Note_MainActivityFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_note);
 
             String title = fragment.TxtTitle_EditText.getText().toString();
             String body = fragment.TxtBody_EditText.getText().toString();

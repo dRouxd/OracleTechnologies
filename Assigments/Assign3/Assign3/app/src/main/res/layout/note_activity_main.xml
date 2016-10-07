@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.danny.a1342097.assign3.Note_MainActivity">
+    tools:context="com.danny.a1342097.assign3.Note_MainActivity"
+    android:id="@+id/note_activity_main">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"

@@ -21,6 +21,7 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -28,10 +29,17 @@ import java.util.List;
  */
 public class MainActivityFragment extends Fragment {
 
+    public interface OnNoteChosen
+    {
+        void OnNoteChosen(String title, String content, boolean hasReminder, Date reminder, int category);
+    }
+
     private Spinner spinner;
     private ListView notes;
     private ArrayAdapter<Note> adapterList;
     private ArrayAdapter<String> adapterSpinner;
+
+    private OnNoteChosen listener;
 
     private final String SPINNER_TITLE = "Title";
     private final String SPINNER_CREATION_DATE = "Creation Date";
@@ -39,6 +47,12 @@ public class MainActivityFragment extends Fragment {
     private final String SPINNER_REMINDER = "Reminder";
 
     public MainActivityFragment() {
+        listener = null;
+    }
+
+    public void setOnNoteChosen(OnNoteChosen listener)
+    {
+        this.listener = listener;
     }
 
     @Override
@@ -208,14 +222,20 @@ public class MainActivityFragment extends Fragment {
                 @Override
                 public void onClick(View v)
                 {
-                    Toast.makeText(getContext(), note.toString(), Toast.LENGTH_SHORT).show();
+                    if(listener != null)
+                    {
+                        listener.OnNoteChosen(note.getTitle(), note.getBody(), note.HasReminder(), note.getReminder(), note.getCategory());
+                    }
                 }
             });
 
             content.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getContext(), note.toString(), Toast.LENGTH_SHORT).show();
+                    if(listener != null)
+                    {
+                        listener.OnNoteChosen(note.getTitle(), note.getBody(), note.HasReminder(), note.getReminder(), note.getCategory());
+                    }
                 }
             });
 
