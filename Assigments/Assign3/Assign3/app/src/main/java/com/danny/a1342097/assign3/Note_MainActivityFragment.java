@@ -2,11 +2,9 @@ package com.danny.a1342097.assign3;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutCompat;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,14 +15,8 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
-import com.danny.a1342097.assign3.CircleView;
-
-import org.w3c.dom.Text;
-
-import java.sql.Date;
-import java.sql.Time;
+import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -62,6 +54,12 @@ public class Note_MainActivityFragment extends Fragment
     View ViewHorizontalBar1_CustomView;
     View ViewHorizontalBar2_CustomView;
 
+
+    private String title;
+    private String content;
+
+    private Date reminderDate;
+
     public final Calendar calendar = Calendar.getInstance();
 
     //default category is no category
@@ -75,10 +73,10 @@ public class Note_MainActivityFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_main, container, false);
+        View root = inflater.inflate(R.layout.note_fragment_main, container, false);
 
         //set the layouts
-        MainLayout = (LinearLayout) root.findViewById(R.id.MainLayout);
+        MainLayout = (LinearLayout) root.findViewById(R.id.note_fragment_layout);
         TimeLayout = (LinearLayout) root.findViewById(R.id.TimeLayout);
         DateLayout = (LinearLayout) root.findViewById(R.id.DateLayout);
 
@@ -157,7 +155,7 @@ public class Note_MainActivityFragment extends Fragment
 
 
         //set the calendar time
-        java.util.Date date = new java.util.Date();
+        Date date = new Date();
         calendar.setTime(date);
 
         //set the handler for the time
@@ -230,37 +228,37 @@ public class Note_MainActivityFragment extends Fragment
             MainLayout.setBackgroundColor(c.getColor());
 
             //set the current color category depending on the color of the clicked circle view
-            int currentColor = c.getColor();
-            switch (currentColor)
-            {
-                case R.color.base08:
-                    category = 1;
-                    break;
-                case R.color.base09:
-                    category = 2;
-                    break;
-                case R.color.base0A:
-                    category = 3;
-                    break;
-                case R.color.base0B:
-                    category = 4;
-                    break;
-                case R.color.base0C:
-                    category = 5;
-                    break;
-                case R.color.base0D:
-                    category = 6;
-                    break;
-                case R.color.base0E:
-                    category = 7;
-                    break;
-                case R.color.base0F:
-                    category = 8;
-                    break;
-            }
+            category = c.getColor();
 
         }
     }
+
+
+    public void loadNote(String title, String content, boolean hasReminder, Date reminderDate, int category)
+    {
+
+        TxtTitle_EditText.setText(title);
+        TxtBody_EditText.setText(content);
+
+        SwtReminder_Switch.setChecked(hasReminder);
+
+        calendar.setTime(reminderDate);
+
+        SimpleDateFormat t = new SimpleDateFormat(TIME_DISPLAY_FORMAT);
+        String time = t.format(calendar.getTime());
+        LblTime_TextView.setText(time);
+
+        t = new SimpleDateFormat(DATE_DISPLAY_FORMAT);
+        String date = t.format(calendar.getTime());
+        LblDate_TextView.setText(date);
+
+        this.category = category;
+
+        MainLayout.setBackgroundColor(category);
+
+    }
+
+
 }
 
 

@@ -31,7 +31,7 @@ public class MainActivityFragment extends Fragment {
 
     public interface OnNoteChosen
     {
-        void OnNoteChosen(String title, String content, boolean hasReminder, Date reminder, int category);
+        void OnNoteChosen(long id, String title, String content, boolean hasReminder, Date reminder, int category, Date created);
     }
 
     private Spinner spinner;
@@ -96,51 +96,10 @@ public class MainActivityFragment extends Fragment {
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     String selectedItem = parent.getItemAtPosition(position).toString();
 
-                    if(selectedItem == SPINNER_TITLE)
-                    {
-                        adapterList.sort(new Comparator<Note>() {
-                            @Override
-                            public int compare(Note o1, Note o2) {
-                                return o1.getTitle().compareTo(o2.getTitle());
-                            }
-                        });
-                    }else if(selectedItem == SPINNER_CATEGORY)
-                    {
-                        adapterList.sort(new Comparator<Note>() {
-                            @Override
-                            public int compare(Note o1, Note o2) {
-                                if(o1.getCategory() > o2.getCategory())
-                                    return 1;
-                                else if (o1.getCategory() < o2.getCategory())
-                                    return -1;
-                                return 0;
-                            }
-                        });
-                    }else if(selectedItem == SPINNER_CREATION_DATE)
-                    {
-                        adapterList.sort(new Comparator<Note>() {
-                            @Override
-                            public int compare(Note o1, Note o2) {
-                                return o1.getCreated().compareTo(o2.getCreated());
-                            }
-                        });
-                    }else if(selectedItem == SPINNER_REMINDER)
-                    {
-                        adapterList.sort(new Comparator<Note>() {
-                            @Override
-                            public int compare(Note o1, Note o2) {
-                                if(o1.HasReminder() && o2.HasReminder())
-                                    return o1.getReminder().compareTo(o2.getReminder());
-                                else if (o1.HasReminder())
-                                    return -1;
-                                return 1;
-                            }
-                        });
-                    }
-
+                    //sort the list
+                    sortAdapter(selectedItem);
 
                     notes.setAdapter(adapterList);
-
 
                 }
 
@@ -190,11 +149,6 @@ public class MainActivityFragment extends Fragment {
 
 
 
-
-
-
-
-
             if(note.HasReminder())
             {
                 reminder.setImageResource(R.drawable.ic_alarm_on_black_48dp);
@@ -214,17 +168,13 @@ public class MainActivityFragment extends Fragment {
 
 
 
-
-
-
-
             title.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v)
                 {
                     if(listener != null)
                     {
-                        listener.OnNoteChosen(note.getTitle(), note.getBody(), note.HasReminder(), note.getReminder(), note.getCategory());
+                        listener.OnNoteChosen(note.getId(), note.getTitle(), note.getBody(), note.HasReminder(), note.getReminder(), note.getCategory(), note.getCreated());
                     }
                 }
             });
@@ -234,7 +184,7 @@ public class MainActivityFragment extends Fragment {
                 public void onClick(View v) {
                     if(listener != null)
                     {
-                        listener.OnNoteChosen(note.getTitle(), note.getBody(), note.HasReminder(), note.getReminder(), note.getCategory());
+                        listener.OnNoteChosen(note.getId(), note.getTitle(), note.getBody(), note.HasReminder(), note.getReminder(), note.getCategory(), note.getCreated());
                     }
                 }
             });
@@ -269,5 +219,71 @@ public class MainActivityFragment extends Fragment {
 
         public long getItemId(int position) { return getItem(position).getId(); }
     }
+
+
+    private void sortAdapter(String spinnerSelectedItem)
+    {
+        if(spinnerSelectedItem == SPINNER_TITLE)
+        {
+            adapterList.sort(new Comparator<Note>() {
+                @Override
+                public int compare(Note o1, Note o2) {
+                    return o1.getTitle().compareTo(o2.getTitle());
+                }
+            });
+        }else if(spinnerSelectedItem == SPINNER_CATEGORY)
+        {
+            adapterList.sort(new Comparator<Note>() {
+                @Override
+                public int compare(Note o1, Note o2) {
+                    if(o1.getCategory() > o2.getCategory())
+                        return 1;
+                    else if (o1.getCategory() < o2.getCategory())
+                        return -1;
+                    return 0;
+                }
+            });
+        }else if(spinnerSelectedItem == SPINNER_CREATION_DATE)
+        {
+            adapterList.sort(new Comparator<Note>() {
+                @Override
+                public int compare(Note o1, Note o2) {
+                    return o1.getCreated().compareTo(o2.getCreated());
+                }
+            });
+        }else if(spinnerSelectedItem == SPINNER_REMINDER)
+        {
+            adapterList.sort(new Comparator<Note>() {
+                @Override
+                public int compare(Note o1, Note o2) {
+                    if(o1.HasReminder() && o2.HasReminder())
+                        return o1.getReminder().compareTo(o2.getReminder());
+                    else if (o1.HasReminder())
+                        return -1;
+                    return 1;
+                }
+            });
+        }
+    }
+
+
+    public void updateList()
+    {
+        NoteDatabaseHandler dbh = new NoteDatabaseHandler(getContext());
+
+        try {
+
+            final List<Note> data =  dbh.getNoteTable().readAll();
+
+            adapterList.clear();
+            adapterList.addAll(data);
+            sortAdapter(spinner.getSelectedItem().toString());
+            notes.setAdapter(adapterList);
+
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 }

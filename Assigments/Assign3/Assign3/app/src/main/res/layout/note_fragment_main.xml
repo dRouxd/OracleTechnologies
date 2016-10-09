@@ -1,12 +1,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/note_fragment_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
-    tools:context="com.danny.a1342097.assign3.MainActivityFragment"
-    tools:showIn="@layout/activity_main"
+    tools:context=".Note_MainActivityFragment"
     android:orientation="vertical"
-    android:id="@+id/MainLayout"
+    tools:showIn="@layout/note_activity_main"
     android:animateLayoutChanges="true">
 
 

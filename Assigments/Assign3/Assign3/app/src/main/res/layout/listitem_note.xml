@@ -31,10 +31,10 @@
             android:layout_toStartOf="@+id/ImgReminder_ImageView" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dignissim condimentum tincidunt. Morbi varius, sapien et rutrum tempus, lorem nisl ultrices arcu, nec condimentum justo mi rutrum enim. Sed eu purus eu dolor ullamcorper cursus. Aliquam porttitor condimentum mauris, blandit cursus nisl aliquet nec. Suspendisse sit amet consequat eros, in fermentum velit. Pellentesque non libero sagittis, commodo tellus sed, tincidunt dolor. Pellentesque dapibus lacus ac urna semper lacinia id eget massa. Aliquam ut eleifend ex. Nam condimentum velit eu turpis congue tristique. Fusce id aliquam diam."
+            android:text="Lorem "
             android:id="@+id/LblContent_TextView"
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
