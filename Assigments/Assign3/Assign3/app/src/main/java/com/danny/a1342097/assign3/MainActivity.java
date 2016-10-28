@@ -12,11 +12,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.util.Calendar;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
     private MainActivityFragment mainActivityFragment;
+    private Note_MainActivityFragment noteMainActivityFragment;
+    private boolean isTablet;
+    private long currentID;
+    private Date currentCreatedDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,9 +30,12 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
 
-
-
         mainActivityFragment = (MainActivityFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_main);
+        noteMainActivityFragment = (Note_MainActivityFragment) getSupportFragmentManager().findFragmentById(R.id.note_fragment);
+
+        isTablet = noteMainActivityFragment != null;
+
+
         mainActivityFragment.setOnNoteChosen(new MainActivityFragment.OnNoteChosen() {
             @Override
             public void OnNoteChosen(long id, String title, String content, boolean hasReminder, Date reminder, int category, Date created) {
@@ -43,7 +51,13 @@ public class MainActivity extends AppCompatActivity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 
 
-                startActivityForResult(intent, 1);
+                if(isTablet) {
+                    noteMainActivityFragment.loadNote(title, content, hasReminder, reminder, category);
+                    currentID = id;
+                    currentCreatedDate = created;
+                }
+                else
+                    startActivityForResult(intent, 1);
 
 
 
@@ -81,6 +95,43 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            return true;
+        }
+
+        if (id == R.id.action_save) {
+
+            Note_MainActivityFragment fragment = (Note_MainActivityFragment) getSupportFragmentManager().findFragmentById(R.id.note_fragment);
+
+            String newTitle = fragment.TxtTitle_EditText.getText().toString();
+            String newBody = fragment.TxtBody_EditText.getText().toString();
+            int newCategory = fragment.category;
+            boolean newHasReminder = fragment.hasReminder;
+            Calendar newCalendar = fragment.calendar;
+
+            Note note = new Note(newTitle, newBody, newCategory, newHasReminder, newCalendar.getTime(), currentCreatedDate);
+
+
+            NoteDatabaseHandler dbh = new NoteDatabaseHandler(this);
+
+            try {
+
+                //if new note, ie id = -1, create a new note
+                if(currentID == -1)
+                {
+                    currentID = dbh.getNoteTable().create(note);
+                }else   //update the note
+                {
+                    note.setId(currentID);
+                    dbh.getNoteTable().update(note);
+                }
+
+
+            } catch (DatabaseException e) {
+                e.printStackTrace();
+            }
+
+            mainActivityFragment.updateList();
+
             return true;
         }
 
