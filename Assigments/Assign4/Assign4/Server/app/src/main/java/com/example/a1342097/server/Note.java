@@ -43,17 +43,13 @@ public class Note {
         CreatedBy createdBy;
     }
 
-
     private Links _links;
-
-
 
 
     private static class Embedded
     {
         public Embedded()
         {
-
         }
         private Note[] note;
     }
@@ -162,10 +158,9 @@ public class Note {
 
         System.out.println(parseString);
 
-        //Note[] notes = new Gson().fromJson(parseString, NoteArray.class)._embedded.notes;
-        NoteArray notes = new Gson().fromJson(parseString, NoteArray.class);
+        Note[] notes = new Gson().fromJson(parseString, NoteArray.class)._embedded.note;
 
-        return notes._embedded.note;
+        return notes;
     }
 
     public String format()

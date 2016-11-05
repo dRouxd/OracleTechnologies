@@ -46,6 +46,23 @@ public class User {
     }
     private Links _links;
 
+
+    private static class Embedded
+    {
+        public Embedded()
+        {
+        }
+        private User[] user;
+    }
+
+    private static class UserArray
+    {
+        private  Embedded _embedded = new Embedded();
+    }
+
+
+
+
     public User()
     {
 
@@ -55,11 +72,6 @@ public class User {
         this.name = name;
         this.password = encryptPassword(password);
         this.email = email;
-
-
-
-
-
     }
 
     public String getUrl() {
@@ -83,7 +95,7 @@ public class User {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.password = encryptPassword(password);
     }
 
     public String getEmail() {
@@ -123,9 +135,8 @@ public class User {
 
     public static User[] parseArray(String parseString)
     {
-        User[] u = new User[]{};
-        User[] user = new Gson().fromJson(parseString, u.getClass());
-        return null;
+        User[] users = new Gson().fromJson(parseString, UserArray.class)._embedded.user;
+        return users;
     }
 
     public String format()

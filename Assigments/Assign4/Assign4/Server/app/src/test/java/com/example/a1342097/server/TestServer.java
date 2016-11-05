@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.Scanner;
@@ -21,6 +22,7 @@ import com.example.a1342097.server.Note;
 import com.example.a1342097.server.User;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.fail;
 
 /**
@@ -78,7 +80,7 @@ public class TestServer {
         }
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-        sampleNote = new Note();
+        sampleNote = sampleNote = new Note();
         sampleNote.setUrl(noteUrls[0]);
         sampleNote.setTitle("Lorem ipsum dolor");
         sampleNote.setBody("Lorem ipsum dolor sit amet, vel ei graece primis ullamcorper, unum denique an nam. Eum fabulas impedit tibique ex. No nonumes lobortis usu, te probo partem consequat vel. An dicta fastidii iracundia mel, eum pertinax consequat id. Est commune sadipscing ex, vocent laoreet an ius.");
@@ -221,7 +223,7 @@ public class TestServer {
 
         // push updates to server
         response = HttpRequest.make(receivedUser.getUrl(), HttpRequest.Method.PUT, receivedUser.format());
-        assertEquals(204, response.getStatus());
+        assertEquals(200, response.getStatus());
     }
 
     /**
@@ -254,7 +256,16 @@ public class TestServer {
      */
     @Test
     public void testUserNameUnique() throws IOException {
-        fail(); // TODO
+
+        //create a user with a name that already exist
+        User existingUser = new User("ian", "foobar", "ian.clement@johnabbott.qc.ca");
+
+        //try to insert the user in the database
+        HttpResponse response = HttpRequest.make(PREFIX + "/user", HttpRequest.Method.POST, existingUser.format());
+
+        //user already exist in the database and couldn't be added
+        assertEquals(response.getStatus(), 409);
+
     }
 
     /**
@@ -263,8 +274,22 @@ public class TestServer {
      * @throws IOException
      */
     @Test
-    public void testNoteTitleUnique() throws IOException {
-        fail(); // TODO
+    public void testNoteTitleUnique() throws IOException, ParseException {
+        //create a note with a title that already exist
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        Note existingNote = sampleNote = new Note();
+        existingNote.setUrl(noteUrls[0]);
+        existingNote.setTitle("Lorem ipsum dolor");
+        existingNote.setBody("Lorem ipsum dolor sit amet, vel ei graece primis ullamcorper, unum denique an nam. Eum fabulas impedit tibique ex. No nonumes lobortis usu, te probo partem consequat vel. An dicta fastidii iracundia mel, eum pertinax consequat id. Est commune sadipscing ex, vocent laoreet an ius.");
+        existingNote.setCategory(-737419);
+        existingNote.setReminder(format.parse("2016-10-12T16:32:54.000-0400"));
+        existingNote.setCreated(format.parse("2016-09-10T00:23:34.000-0400"));
+
+        //try to insert the note in the database
+        HttpResponse response = HttpRequest.make(PREFIX + "/note", HttpRequest.Method.POST, existingNote.format());
+
+        //note with a same title already exist in the database and couldn't be added
+        assertEquals(response.getStatus(), 409);
     }
 
     /**
@@ -273,7 +298,33 @@ public class TestServer {
      * @throws IOException
      */
     @Test
-    public void testNoteReminderAfterCreated() throws IOException {
-        fail(); // TODO
+    public void testNoteReminderAfterCreated() throws IOException, ParseException {
+
+        //create a note with the reminder set before the date
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        Note uniqueNote = sampleNote = new Note();
+        uniqueNote.setUrl(noteUrls[0]);
+        uniqueNote.setTitle("Lorem ipsum dolor");
+        uniqueNote.setBody("Lorem ipsum dolor sit amet, vel ei graece primis ullamcorper, unum denique an nam. Eum fabulas impedit tibique ex. No nonumes lobortis usu, te probo partem consequat vel. An dicta fastidii iracundia mel, eum pertinax consequat id. Est commune sadipscing ex, vocent laoreet an ius.");
+        uniqueNote.setCategory(-737419);
+
+        //make sure that the reminder comes before the created date
+        uniqueNote.setReminder(format.parse("2016-09-10T00:23:34.000-0400"));
+        uniqueNote.setCreated(format.parse("2016-10-12T16:32:54.000-0400"));
+
+        //try to insert the note in the database
+        HttpResponse response = HttpRequest.make(PREFIX + "/note", HttpRequest.Method.POST, uniqueNote.format());
+
+        //note with a reminder date set before the created date couldn't be added to the database
+        assertEquals(response.getStatus(), 500);
+
     }
+
+
+
+
+
+
+
+
 }
