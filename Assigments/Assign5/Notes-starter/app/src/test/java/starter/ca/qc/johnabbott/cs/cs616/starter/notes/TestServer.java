@@ -1,10 +1,8 @@
-package com.example.a1342097.server;
+package starter.ca.qc.johnabbott.cs.cs616.starter.notes;
 
 // NOTE TO STUDENTS: use Gson not org.json libraries.
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
+
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,14 +14,12 @@ import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
 
-import com.example.a1342097.server.HttpRequest;
-import com.example.a1342097.server.HttpResponse;
-import com.example.a1342097.server.Note;
-import com.example.a1342097.server.User;
+import starter.ca.qc.johnabbott.cs.cs616.starter.notes.model.HttpRequest;
+import starter.ca.qc.johnabbott.cs.cs616.starter.notes.model.HttpResponse;
+import starter.ca.qc.johnabbott.cs.cs616.starter.notes.model.Note;
+import starter.ca.qc.johnabbott.cs.cs616.starter.notes.model.User;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  * Tests of the server interaction for user and note repositories.
@@ -32,7 +28,7 @@ import static org.junit.Assert.fail;
 public class TestServer {
 
     // server parameters: change as needed
-    public static final String SERVER = "localhost";
+    public static final String SERVER = "192.168.137.1/";
     public static final int PORT = 9999;
     public static final String PREFIX = "http://" + SERVER + ":" + String.valueOf(PORT);
 
@@ -105,7 +101,7 @@ public class TestServer {
     @After
     public void tearDown() throws Exception {
 
-        String[] repos = new String[] {"note", "user"}; // The order matters due to foreign key contraints
+        /*String[] repos = new String[] {"note", "user"}; // The order matters due to foreign key contraints
 
         for(String repo : repos) {
 
@@ -136,7 +132,7 @@ public class TestServer {
                     throw new Exception("Could not delete " + url + ". Please restart server.");
             }
 
-        }
+        }*/
     }
 
     /**

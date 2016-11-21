@@ -1,4 +1,4 @@
-package com.example.a1342097.server;
+package starter.ca.qc.johnabbott.cs.cs616.starter.notes;
 
 import org.junit.Test;
 
@@ -6,9 +6,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 
-
-import com.example.a1342097.server.Note;
-import com.example.a1342097.server.User;
+import starter.ca.qc.johnabbott.cs.cs616.starter.notes.model.Note;
+import starter.ca.qc.johnabbott.cs.cs616.starter.notes.model.User;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
