@@ -9,6 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
@@ -20,9 +21,9 @@ import java.util.Map;
  *
  * @author Ian Clement (ian.clement@johnabbott.qc.ca)
  */
-public class AsyncHttpRequest extends AsyncTask<Void, HttpProgress, HttpResponse> {
+public class AsyncHttpRequest extends AsyncTask<Void, HttpProgress, Either<IOException, HttpResponse>> {
 
-    private static final int BUFFER_SIZE = 1024;
+    private static final int BUFFER_SIZE = 10;
     private static final int DEBUG_SLOW_TRANSFER = 200;
 
     /**
@@ -101,18 +102,18 @@ public class AsyncHttpRequest extends AsyncTask<Void, HttpProgress, HttpResponse
                 }
 
                 currentProgress.setProgress(transferredSoFar);
-                listener.onProgress(currentProgress);
+                publishProgress(currentProgress);
             }
         }
 
         currentProgress.setProgress(transferredSoFar);
-        listener.onProgress(currentProgress);
+        publishProgress(currentProgress);
 
         outBuf.flush();
     }
 
     @Override
-    protected HttpResponse doInBackground(Void... voids) {
+    protected Either<IOException, HttpResponse> doInBackground(Void... voids) {
 
         // if the listener is not definded... create a do nothing listener.
         if(listener == null)
@@ -160,8 +161,7 @@ public class AsyncHttpRequest extends AsyncTask<Void, HttpProgress, HttpResponse
             try {
                 response.setStatus(con.getResponseCode());
             } catch (IOException e) {
-                listener.onError(e);
-                return null;
+                return Either.left(e);
             }
 
             try {
@@ -185,11 +185,10 @@ public class AsyncHttpRequest extends AsyncTask<Void, HttpProgress, HttpResponse
             } catch (IOException e) { /* no response body */ }
         }
         catch (IOException e) {
-            listener.onError(e);
-            return null;
+            return Either.left(e);
         }
 
-        return response;
+        return Either.right(response);
     }
 
     @Override
@@ -199,8 +198,91 @@ public class AsyncHttpRequest extends AsyncTask<Void, HttpProgress, HttpResponse
     }
 
     @Override
-    protected void onPostExecute(HttpResponse httpResponse) {
-        // report the result on the UI thread.
-        listener.onResult(httpResponse);
+    protected void onPostExecute(Either<IOException, HttpResponse> result) {
+        // report the result on the UI thread
+        // results go to onResult()
+        // errors go to onError()
+        switch (result.getSide()) {
+            case RIGHT:
+                listener.onResult(result.getRight());
+                break;
+            case LEFT:
+                listener.onError(result.getLeft());
+                break;
+        }
+    }
+}
+
+/**
+ * Represents a value of either type L or R (referred to as "left" and "rignt" values)
+ * @param <L>
+ * @param <R>
+ */
+class Either<L, R> {
+
+    public enum Side { LEFT, RIGHT };
+
+    private Side side;
+    private L left;
+    private R right;
+
+    /**
+     * Create a "left" value.
+     * @param left
+     * @param <L>
+     * @param <R>
+     * @return
+     */
+    public static <L, R> Either<L, R> left(L left) {
+        Either<L, R> e = new Either<>();
+        e.side = Side.LEFT;
+        e.left = left;
+        return e;
+    }
+
+    /**
+     * Create a "right" value
+     * @param right
+     * @param <L>
+     * @param <R>
+     * @return
+     */
+    public static <L, R> Either<L, R> right(R right) {
+        Either<L, R> e = new Either<>();
+        e.side = Side.RIGHT;
+        e.right = right;
+        return e;
+    }
+
+    private Either() {}
+
+    /**
+     * Determine if the value is either left or right
+     * @return
+     */
+    public Side getSide() {
+        return side;
+    }
+
+    /**
+     * Get the "left" value
+     * @return
+     * @precondition current either must be left
+     */
+    public L getLeft() {
+        if(side != Side.LEFT)
+            throw new RuntimeException("Trying to access a RIGHT value as a LEFT.");
+        return left;
+    }
+
+    /**
+     * Get the "right" value
+     * @return
+     * @precondition current either must be right
+     */
+    public R getRight() {
+        if(side != Side.RIGHT)
+            throw new RuntimeException("Trying to access a LEFT value as a RIGHT.");
+        return right;
     }
 }

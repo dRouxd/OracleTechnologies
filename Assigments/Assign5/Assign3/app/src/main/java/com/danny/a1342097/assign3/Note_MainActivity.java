@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -14,6 +15,7 @@ import com.danny.a1342097.assign3.Models.AsyncHttpRequest;
 import com.danny.a1342097.assign3.Models.HttpProgress;
 import com.danny.a1342097.assign3.Models.HttpResponse;
 import com.danny.a1342097.assign3.Models.Note;
+import com.danny.a1342097.assign3.Models.User;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -56,25 +58,38 @@ public class Note_MainActivity extends AppCompatActivity {
 
         noteUrl = intent.getStringExtra(param.url);
 
-        AsyncHttpRequest task = new AsyncHttpRequest(noteUrl, AsyncHttpRequest.Method.GET, null);
-        task.setOnResponseListener(new AsyncHttpRequest.OnResponse() {
-            @Override
-            public void onResult(HttpResponse response) {
-                frag = (Note_MainActivityFragment) getSupportFragmentManager().findFragmentById(R.id.note_fragment);
-                frag.loadNote(Note.parse(response.getBody()));
-            }
+        frag = (Note_MainActivityFragment) getSupportFragmentManager().findFragmentById(R.id.note_fragment);
 
-            @Override
-            public void onProgress(HttpProgress progress) {
+        //if a note was passed
+        if(noteUrl != null)
+        {
+            //load the note for editing
+            AsyncHttpRequest task = new AsyncHttpRequest(noteUrl, AsyncHttpRequest.Method.GET, null);
+            task.setOnResponseListener(new AsyncHttpRequest.OnResponse() {
+                @Override
+                public void onResult(HttpResponse response) {
+                    frag.loadNote(Note.parse(response.getBody()));
+                }
 
-            }
+                @Override
+                public void onProgress(HttpProgress progress) {
 
-            @Override
-            public void onError(Exception e) {
+                }
 
-            }
-        });
-        task.execute();
+                @Override
+                public void onError(Exception e) {
+
+                }
+            });
+            task.execute();
+        }else
+        {
+            Calendar reminder = Calendar.getInstance();
+            reminder.add(Calendar.HOUR, 1);
+            Note note = new Note("", "", 0, false, reminder.getTime() , new Date());
+            frag.loadNote(note);
+        }
+
 
 
     }
@@ -114,16 +129,16 @@ public class Note_MainActivity extends AppCompatActivity {
             }*/
 
 
-            if(noteUrl == "")
+            if(noteUrl == null)
             {
                 Note note = new Note(newTitle, newBody, newCategory, newHasReminder, newCalendar.getTime(), new Date());
-                AsyncHttpRequest task = new AsyncHttpRequest(NoteApplication.PREFIX + "/note", AsyncHttpRequest.Method.POST, note.format());
+                note.setCreatedBy(NoteApplication.CONNECTED_USER);
+                AsyncHttpRequest task = new AsyncHttpRequest(NoteApplication.PREFIX + "/note", AsyncHttpRequest.Method.PUT, note.format());
                 task.setOnResponseListener(new AsyncHttpRequest.OnResponse() {
                     @Override
                     public void onResult(HttpResponse response) {
 
                         Intent intent = new Intent();
-                        intent.putExtra(Note_MainActivity.results.url, response.getHeader("Location").get(0));
                         setResult(RESULT_OK, intent);
                         finish();
 
@@ -149,17 +164,40 @@ public class Note_MainActivity extends AppCompatActivity {
                     public void onResult(HttpResponse response) {
 
                         Note oldNote = Note.parse(response.getBody());
-                        Note newNote = new Note(newTitle, newBody, newCategory, newHasReminder, newCalendar.getTime(), oldNote.getCreated());
+                        final Note newNote = new Note(newTitle, newBody, newCategory, newHasReminder, newCalendar.getTime(), oldNote.getCreated());
                         newNote.setUrl(oldNote.getUrl());
 
-                        AsyncHttpRequest innerTask = new AsyncHttpRequest(newNote.getUrl(), AsyncHttpRequest.Method.PUT, newNote.format());
+                        AsyncHttpRequest innerTaskGetUser = new AsyncHttpRequest(oldNote.getCreatedBy(), AsyncHttpRequest.Method.GET, null);
+                        innerTaskGetUser.setOnResponseListener(new AsyncHttpRequest.OnResponse() {
+                            @Override
+                            public void onResult(HttpResponse response) {
 
-                        innerTask.execute();
+                                User user = User.parse(response.getBody());
 
-                        Intent intent = new Intent();
-                        intent.putExtra(Note_MainActivity.results.url, noteUrl);
-                        setResult(RESULT_OK, intent);
-                        finish();
+                                newNote.setCreatedBy(user.getUrl());
+
+                                AsyncHttpRequest innerTaskUpdate = new AsyncHttpRequest(newNote.getUrl(), AsyncHttpRequest.Method.PUT, newNote.format());
+                                innerTaskUpdate.execute();
+
+                                Intent intent = new Intent();
+                                intent.putExtra(Note_MainActivity.results.url, noteUrl);
+                                setResult(RESULT_OK, intent);
+                                finish();
+                            }
+
+                            @Override
+                            public void onProgress(HttpProgress progress) {
+
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+
+                            }
+                        });
+                        innerTaskGetUser.execute();
+
+
                     }
 
                     @Override
